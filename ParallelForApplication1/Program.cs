@@ -13,7 +13,7 @@ namespace ParallelForApplication1
         {
             new Program().Start();
 
-            Thread.Sleep(10000);
+            Thread.Sleep(5000);
         }
 
         void Start()
@@ -23,7 +23,7 @@ namespace ParallelForApplication1
 
             Parallel.For(0, count, i =>
             {
-                array[i] = Convert.ToString(i);
+                array[i] = String.Format("{0} on thread {1}", i, Thread.CurrentThread.ManagedThreadId);
             });
 
             foreach(var s in array) {
