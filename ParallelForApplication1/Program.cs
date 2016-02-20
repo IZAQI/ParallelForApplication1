@@ -13,19 +13,94 @@ namespace ParallelForApplication1
     {
         static void Main(string[] args)
         {
+            Thread.Sleep(2000);
 
             for (int i = 0; i < 5; i++)
             {
-                new Program().Start();
-                new Program().StartPartitioner();
                 new Program().StartNormal();
+                new Program().StartPartitioner();
+                new Program().StartParallel();
+
+                System.Console.WriteLine("-----------------------------------------");
             }
 
             Thread.Sleep(5000);
         }
 
-        const int count = 500;
+        const int count = 50000;
 
+        #region count=500 result
+        //Normal   calc time 00:00:00.0026005s
+        //Range    calc time 00:00:00.0192606s
+        //Parallel calc time 00:00:00.0016875s
+        //-----------------------------------------
+        //Normal   calc time 00:00:00.0004969s
+        //Range    calc time 00:00:00.0004075s
+        //Parallel calc time 00:00:00.0002972s
+        //-----------------------------------------
+        //Normal   calc time 00:00:00.0003861s
+        //Range    calc time 00:00:00.0002506s
+        //Parallel calc time 00:00:00.0002617s
+        //-----------------------------------------
+        //Normal   calc time 00:00:00.0003823s
+        //Range    calc time 00:00:00.0002715s
+        //Parallel calc time 00:00:00.0002634s
+        //-----------------------------------------
+        //Normal   calc time 00:00:00.0003925s
+        //Range    calc time 00:00:00.0002668s
+        //Parallel calc time 00:00:00.0002407s
+        //-----------------------------------------
+        #endregion
+
+        #region  count=5000 result
+        //Normal   calc time 00:00:00.0092741s
+        //Range    calc time 00:00:00.0219373s
+        //Parallel calc time 00:00:00.0061560s
+        //-----------------------------------------
+        //Normal   calc time 00:00:00.0047927s
+        //Range    calc time 00:00:00.0026736s
+        //Parallel calc time 00:00:00.0030213s
+        //-----------------------------------------
+        //Normal   calc time 00:00:00.0047863s
+        //Range    calc time 00:00:00.0015271s
+        //Parallel calc time 00:00:00.0013518s
+        //-----------------------------------------
+        //Normal   calc time 00:00:00.0020925s
+        //Range    calc time 00:00:00.0013064s
+        //Parallel calc time 00:00:00.0013210s
+        //-----------------------------------------
+        //Normal   calc time 00:00:00.0024367s
+        //Range    calc time 00:00:00.0013441s
+        //Parallel calc time 00:00:00.0013616s
+        //-----------------------------------------
+        #endregion
+
+        #region  count=50000 result
+        //Normal   calc time 00:00:00.0604253s
+        //Range    calc time 00:00:00.0352776s
+        //Parallel calc time 00:00:00.0260963s
+        //-----------------------------------------
+        //Normal   calc time 00:00:00.0357168s
+        //Range    calc time 00:00:00.0209157s
+        //Parallel calc time 00:00:00.0266830s
+        //-----------------------------------------
+        //Normal   calc time 00:00:00.0335019s
+        //Range    calc time 00:00:00.0239221s
+        //Parallel calc time 00:00:00.0248804s
+        //-----------------------------------------
+        //Normal   calc time 00:00:00.0389066s
+        //Range    calc time 00:00:00.0255702s
+        //Parallel calc time 00:00:00.0394899s
+        //-----------------------------------------
+        //Normal   calc time 00:00:00.0516734s
+        //Range    calc time 00:00:00.0259577s
+        //Parallel calc time 00:00:00.0250951s
+        //-----------------------------------------
+        #endregion
+
+        /// <summary>
+        /// Normal for loop.
+        /// </summary>
         void StartNormal()
         {
             var array = new String[count];
@@ -35,6 +110,7 @@ namespace ParallelForApplication1
 
             for (int i = 0; i < count; i++)
             {
+                new Program();
                 array[i] = String.Format("{0} on thread {1}", i, Thread.CurrentThread.ManagedThreadId);
             }
             stopWatch.Stop();
@@ -42,7 +118,10 @@ namespace ParallelForApplication1
             System.Console.WriteLine("Normal   calc time {0}s", stopWatch.Elapsed);
         }
 
-        void Start()
+        /// <summary>
+        /// Parallel for loop.
+        /// </summary>
+        void StartParallel()
         {
             var array = new String[count];
 
@@ -51,6 +130,7 @@ namespace ParallelForApplication1
 
             Parallel.For(0, count, i =>
             {
+                new Program();
                 array[i] = String.Format("{0} on thread {1}", i, Thread.CurrentThread.ManagedThreadId);
             });
             stopWatch.Stop();
@@ -65,6 +145,10 @@ namespace ParallelForApplication1
             //});
 
         }
+
+        /// <summary>
+        /// Partitoner for loop.
+        /// </summary>
         void StartPartitioner()
         {
             var array = new String[count];
@@ -76,12 +160,13 @@ namespace ParallelForApplication1
 
             Parallel.ForEach(rangePartitioner, (range, loopState)=>
             {
-                for (int i = range.Item1; i < range.Item2; i++ )
+                for (int i = range.Item1; i < range.Item2; i++)
+                {
+                    new Program();
                     array[i] = String.Format("{0} on thread {1}", i, Thread.CurrentThread.ManagedThreadId);
+                }
             });
             stopWatch.Stop();
-            // Get the elapsed time as a TimeSpan value.
-            //TimeSpan ts = stopWatch.Elapsed;
 
             System.Console.WriteLine("Range    calc time {0}s", stopWatch.Elapsed);
 
